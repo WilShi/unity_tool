@@ -9,7 +9,7 @@ from createfile import createfile
 from format import format
 
 class main():
-    def __init__(self, path, tag, dic='', appCode='', creator='', outputpath='..') -> None:
+    def __init__(self, path, tag='', dic='', appCode='', creator='', outputpath='..') -> None:
         self.dic = {}
         if dic:
             csv_reader = csv.reader(open(dic))
@@ -28,19 +28,38 @@ class main():
         self.creator = creator
         self.outputpath = outputpath
 
-    def start(self):
+
+    def start(self, workmode, from_='zh', to_='en'):
         for file in self.allfiles:
             filetp = readfile().last_path(file)
             filetp = filetp[filetp.rfind('.')+1:]
-            right_type = ['js', 'jsx', 'tsx']
-            if filetp in right_type:
-                self.transfile(file)
 
-        format(self.csvpath).format_csv(self.appCode, self.creator)
+            right_type = ['js', 'jsx', 'tsx']
+            if filetp in right_type and workmode == 'react':
+                self.transReactfile(file)
+
+            if workmode == 'text':
+                self.transfile(file, from_, to_)
+
+        if workmode == 'react':
+            format(self.csvpath).format_csv(self.appCode, self.creator)
         
 
+    def transfile(self, path, from_='zh', to_='en'):
+        print("*"*50)
+        print("从 {} 路径开始读取文件".format(path))
+        print("*"*50)
+
+        file = open(path, encoding='utf-8')
+        msgs = file.read().split('\n')
+
+        for msg in msgs:
+            if msg:
+                res = lang().translate(msg)
+                print(res[to_])
+
     
-    def transfile(self, path):
+    def transReactfile(self, path):
         print("*"*50)
         print("从 {} 路径开始读取文件".format(path))
         print("*"*50)
@@ -55,12 +74,12 @@ class main():
             for line in f:
                 if '$t' not in line:
                     try:
-                        ses, lis = lang(self.dic, self.tag).transChinese(line)
+                        ses, lis = lang(self.dic, self.tag).transReactChinese(line)
                     except Exception as error:
                         print("出现了问题：{}".format(str(error)))
                         print("等待5秒重新连接网络！！！！！")
                         time.sleep(5)
-                        ses, lis = lang(self.dic, self.tag).transChinese(line)
+                        ses, lis = lang(self.dic, self.tag).transReactChinese(line)
                         
                     new_file += ses
                     if lis:
@@ -89,4 +108,4 @@ class main():
 
 if __name__ == "__main__":
 
-    f = main(argv[1], 'TEST', argv[2], "CRM", "Wilson Shi").start()
+    f = main(argv[1]).start('text')
