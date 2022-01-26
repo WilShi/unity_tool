@@ -23,11 +23,21 @@ class lang():
 
     def check_zh(self, word):
 
-        xx = u"([(（\-]*\w*[\u4e00-\u9fff]+[.。，,;；)）>=\/\、\-(（\d:：？?\u4e00-\u9fff\w]*[\u4e00-\u9fff]+[.。，,;；(（+=\-)）~？?\w\d]*)"
+        xx = u"([\u4e00-\u9fff]+)"
         pattern = re.compile(xx)
         results = pattern.findall(word)
+
+        enxx = u"([a-zA-Z0-9]+)"
+        enpattern = re.compile(enxx)
+        ens = enpattern.findall(word)
         
-        return True if results else False
+        if results and not ens:
+            return True
+        if ens and not results:
+            return False
+        else:
+            zh = ''.join(results)
+            return False if len(ens) > len(zh) else True
 
 
     def translate(self, word, from_='zh', to_='en'):
