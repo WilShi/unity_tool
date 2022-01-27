@@ -75,6 +75,9 @@ class Songs:
             print("爬取完毕")
 
         if mode == "search":
+
+            print(f"开始搜索功能...... 开始搜索 {arg1}")
+
             result = Search().get_music_id(arg1)
             for i in result:
                 print(f"歌曲ID：{i} {'='*10} 歌曲名：{result[i]} {'='*10} 下载用：{i} {result[i]}")
