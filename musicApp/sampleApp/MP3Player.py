@@ -1,12 +1,14 @@
 import random
+import sys
 from PyQt5.QtWidgets import (QWidget, QDesktopWidget,
     QMessageBox, QHBoxLayout, QVBoxLayout, QSlider, QListWidget,
-    QPushButton, QLabel, QComboBox, QFileDialog)
+    QPushButton, QLabel, QComboBox, QFileDialog, QLineEdit)
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QUrl, QTimer
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 import os, time
 import configparser
+import qdarkstyle
 
 class MP3Player(QWidget):
     def __init__(self):
@@ -76,10 +78,21 @@ class MP3Player(QWidget):
         self.hBoxAbout.addStretch(1)
         self.hBoxAbout.addWidget(self.infoLabel)
 
+        self.hBoxsearch = QHBoxLayout() # 建立搜索栏
+        self.searchbar = QLineEdit(self)
+        self.searchBtn = QPushButton(self)
+        self.searchBtn.setText('搜索')
+        self.searchBtn.setFixedSize(60, 28)
+        self.hBoxsearch.addWidget(self.searchbar)
+        self.hBoxsearch.addWidget(self.searchBtn)
+
         self.vboxMain = QVBoxLayout()
+        self.vboxMain.addLayout(self.hBoxsearch)
         self.vboxMain.addWidget(self.musicList)
         self.vboxMain.addLayout(self.vBoxControl)
-        self.vboxMain.addLayout(self.hBoxAbout)
+        # self.vboxMain.addLayout(self.hBoxAbout)
+
+
         
         self.setLayout(self.vboxMain)
 
@@ -92,6 +105,9 @@ class MP3Player(QWidget):
         self.PlayModeBtn.clicked.connect(self.playModeSet)
 
         self.loadingSetting()
+
+        self.setWindowOpacity(0.9) # 设置窗口透明度
+        self.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5()) # 美化风格
 
         self.initUI()
 

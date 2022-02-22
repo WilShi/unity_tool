@@ -31,15 +31,23 @@ class Songs:
         if not os.path.exists(self.path): os.makedirs(self.path)
 
 
-    def download(self, id, name):
+    def download(self, id, name, outpath=''):
         url = f'http://music.163.com/song/media/outer/url?id={id}'
         response = requests.get(url=url, headers=self.headers, timeout=5).content
 
-        path = '{}/{}.mp3'.format(self.path, name)
+        outpath = self.path if not outpath else outpath
+        path = '{}/{}.mp3'.format(outpath, name)
         with open(path,'wb') as f:
             f.write(response)
 
         print(f"{name} 下载完成 {'='*10} 路径为：{path}")
+
+
+    def getmusic(self, id):
+        url = f'http://music.163.com/song/media/outer/url?id={id}'
+        response = requests.get(url=url, headers=self.headers, timeout=5).content
+        # print(response)
+        return response
 
 
     def get_id(self, url):
@@ -75,7 +83,6 @@ class Songs:
             print("爬取完毕")
 
         if mode == "search":
-
             print(f"开始搜索功能...... 开始搜索 {arg1}")
 
             result = Search().get_music_id(arg1)
