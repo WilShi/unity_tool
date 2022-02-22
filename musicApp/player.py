@@ -12,7 +12,7 @@ import qdarkstyle
 
 from songs import Search, Songs
 
-class MP3Player(QWidget):
+class Player(QWidget):
     def __init__(self):
         super().__init__()
 
@@ -338,5 +338,5 @@ class MP3Player(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = MP3Player()
+    ex = Player()
     sys.exit(app.exec_())
