@@ -115,7 +115,10 @@ class Player(QWidget):
         self.searchBtn.clicked.connect(self.search)
         self.downloadBtn.clicked.connect(self.download)
 
-        self.loadingSetting()
+        try:
+            self.loadingSetting()
+        except Exception as error:
+            pass
 
         self.setWindowOpacity(0.9) # 设置窗口透明度
         self.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5()) # 美化风格
