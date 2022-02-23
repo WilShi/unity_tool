@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2022-02-23T08:56:08.961Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36" etag="XGnovP8qpRFY0Qnc9_j8" version="16.6.1" type="github">
+<mxfile host="app.diagrams.net" modified="2022-02-23T09:08:44.762Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36" etag="KcEGTLE-es0BsX-Elo-2" version="16.6.1" type="github">
   <diagram id="sQtWQpGaqMQVrjButEeK" name="Page-1">
     <mxGraphModel dx="865" dy="483" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -319,9 +319,6 @@
         </mxCell>
         <mxCell id="MCODo4xbxUE0NeEZo0eT-106" value="音乐" style="rounded=1;html=1;shadow=0;dashed=0;whiteSpace=wrap;fontSize=10;fillColor=#666666;align=center;strokeColor=#4D4D4D;fontColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="91.75" y="2030" width="105.5" height="40" as="geometry" />
-        </mxCell>
-        <mxCell id="MCODo4xbxUE0NeEZo0eT-107" value="React国际化" style="text;strokeColor=none;fillColor=none;html=1;fontSize=24;fontStyle=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
-          <mxGeometry x="499" y="1650" width="130" height="40" as="geometry" />
         </mxCell>
         <mxCell id="MCODo4xbxUE0NeEZo0eT-108" value="选择文件" style="rounded=1;html=1;shadow=0;dashed=0;whiteSpace=wrap;fontSize=10;fillColor=#666666;align=center;strokeColor=#4D4D4D;fontColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="392.25" y="1730" width="75.5" height="30" as="geometry" />
