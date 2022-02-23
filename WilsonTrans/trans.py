@@ -8,12 +8,14 @@ from sys import argv
 import time
 import requests
 
-# from selenium import webdriver
-# from webdriver_manager.chrome import ChromeDriverManager
-# from selenium.webdriver.common.by import By
-# from bs4 import BeautifulSoup
+from io import StringIO
+from concurrent import futures
+from pdfminer.pdfinterp import PDFResourceManager
+from pdfminer.pdfinterp import process_pdf
+from pdfminer.converter import TextConverter
+from pdfminer.layout import LAParams
 
-
+# need install "pdfminer3k"
 
 class lang():
     def __init__(self, dic={}, translateFrom='google') -> None:
@@ -27,7 +29,7 @@ class lang():
         pattern = re.compile(xx)
         results = pattern.findall(word)
 
-        enxx = u"([a-zA-Z0-9]+)"
+        enxx = u"([a-zA-Z0-9.\(\)\[\]\_\-]+)"
         enpattern = re.compile(enxx)
         ens = enpattern.findall(word)
         
@@ -64,31 +66,10 @@ class lang():
             expr = r'(?s)class="(?:t0|result-container)">(.*?)<'
             result = re.findall(expr, data)
 
-            # print("成功翻译‘{}’至‘{}’".format(word, html.unescape(result[0])))
             res = html.unescape(result[0])
-
-            # wd = {from_: word, to_: res}
 
             
         elif self.translateFrom == "deepl":
-            # translateApi = "https://www.deepl.com/translator#%s/%s/%s" % (from_, to_, word)
-
-            # # 不显示页面
-            # option=webdriver.ChromeOptions()
-            # option.add_argument('headless')
-
-            # # browser = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=option)
-            # browser = webdriver.Chrome(ChromeDriverManager().install()) # 显示页面
-            # browser.get(translateApi)
-            # time.sleep(5) # 等待加载翻译结果
-
-            # pagehtml = browser.page_source
-            # bs = BeautifulSoup(pagehtml, "html.parser")
-            # res = bs.find('div', id='target-dummydiv').get_text().strip()
-
-            # print("成功翻译‘{}’至‘{}’".format(word, res))
-            # wd = {from_: word, to_: res}
-
             proxies = {
                 'https': 'http://127.0.0.1:41091'
             }
@@ -128,8 +109,6 @@ class lang():
                 res = False
             else:
                 res =  r.json()['result']['translations'][0]['beams'][0]['postprocessed_sentence']
-                # print("成功翻译‘{}’至‘{}’".format(word, res))
-                # wd = {from_: word, to_: res}
 
         return res
 
@@ -147,11 +126,48 @@ class lang():
         proxy_ip = 'http://'+ip
         proxies = {'http':proxy_ip}
         return proxies
+
+    # 解析pdf文件
+    def read_from_pdf(self, file_path):
+        with open(file_path, 'rb') as file:
+            resource_manager = PDFResourceManager()
+            return_str = StringIO()
+            lap_params = LAParams()
+            device = TextConverter(
+                resource_manager, return_str, laparams=lap_params)
+            process_pdf(resource_manager, device, file)
+            device.close()
+            content = return_str.getvalue()
+            return_str.close()
+            return content
+
+    # 将输入的data返回成为段落组成的列表
+    def clean_data(self, data):
+        data = data.replace('\n\n', '$#$')
+        data = data.replace('\n', ' ')
+        return data.split('$#$')
+
+    def trans_doc(self, path, outpath):
+        if ".pdf" in path:
+            words = self.read_from_pdf(path)
+            words_list = self.clean_data(words)
+
+            with futures.ThreadPoolExecutor(6) as excuter:
+                zh_txt = excuter.map(self.translate, words_list)
+            # zh_txt = [translate(txt) for txt in data_list]
+            zh_txt = list(zh_txt)
+            article = '\n\n'.join(zh_txt)
+            # print(article)
+            # with open(outpath, 'w', encoding='utf-8') as f:
+            #     f.write(article)
+
     
 
 if __name__ == "__main__":
 
 
-    res = lang(translateFrom='google').translate(argv[1])
-    print(res)
+    # res = lang(translateFrom='google').translate(argv[1])
+    # print(res)
+
+    res = lang(translateFrom='google').trans_doc(argv[1], '')
 

@@ -10,6 +10,8 @@ import os, time
 import configparser
 import qdarkstyle
 
+from trans import lang
+
 class Transapp(QWidget):
     def __init__(self):
         super().__init__()
@@ -61,12 +63,25 @@ class Transapp(QWidget):
 
     # 翻译文本
     def transText(self):
-        pass
+        words = self.textinput.toPlainText()
+        try:
+            res = lang(translateFrom='google').translate(words)
+            self.outputres.setText(res)
+        except Exception as error:
+            self.Tips("翻译出错，请稍后再试！")
 
 
     # 翻译文档
     def transDoc(self):
-        pass
+        self.Tips("本服务暂未开启！")
+        # path = self.textinput.toPlainText()
+        # path = QFileDialog.getOpenFileName(self, "选取需要翻译的文件", './') if not \
+        #     os.path.exists(path) and not os.path.isdir(path) else path
+
+
+    # 提示
+    def Tips(self, message):
+        QMessageBox.about(self, "提示", message)
 
 
 if __name__ == '__main__':
