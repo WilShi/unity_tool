@@ -9,6 +9,7 @@ from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 import os, time
 import configparser
 import qdarkstyle
+from pathlib import Path
 
 from songs import Search, Songs
 
@@ -161,7 +162,7 @@ class Player(QWidget):
 
     # 下载音乐
     def download(self):
-        out_path = QFileDialog.getExistingDirectory(self, "选取音乐文件夹", './')
+        out_path = QFileDialog.getExistingDirectory(self, "选取下载地址", str(Path.home())+"/Downloads")
         if out_path:
             song_name = self.songs_list[self.musicList.currentRow()][0]
             song_id = self.songs_list[self.musicList.currentRow()][-1]
@@ -173,7 +174,7 @@ class Player(QWidget):
 
     # 打开文件夹
     def openMusicFloder(self):
-        self.cur_path = QFileDialog.getExistingDirectory(self, "选取音乐文件夹", './')
+        self.cur_path = QFileDialog.getExistingDirectory(self, "选取音乐文件夹", str(Path.home())+"/Downloads")
         if self.cur_path:
             self.showMusicList()
             self.cur_playing_song = ''

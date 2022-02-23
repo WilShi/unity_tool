@@ -133,8 +133,8 @@ class ItnApp(QWidget):
 
     # 设置输入的文件路径
     def selectfile(self):
-        self.filepath = QFileDialog.getExistingDirectory(self, "选取需要国际化的文件", str(Path.home()))
-        outputpath = QFileDialog.getExistingDirectory(self, "选取导出文件的路径", '.')
+        self.filepath = QFileDialog.getExistingDirectory(self, "选取需要国际化的文件", str(Path.home())+"/Desktop")
+        outputpath = QFileDialog.getExistingDirectory(self, "选取导出文件的路径", str(Path.home())+"/Downloads")
 
     # 开始国际化
     def startitn(self):

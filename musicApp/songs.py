@@ -28,7 +28,6 @@ class Songs:
         }
 
         self.path = '{}/Downloads/music'.format(str(Path.home()))
-        if not os.path.exists(self.path): os.makedirs(self.path)
 
 
     def download(self, id, name, outpath=''):
@@ -36,6 +35,8 @@ class Songs:
         response = requests.get(url=url, headers=self.headers, timeout=5).content
 
         outpath = self.path if not outpath else outpath
+        if not os.path.exists(outpath): os.makedirs(outpath)
+        
         path = '{}/{}.mp3'.format(outpath, name)
         with open(path,'wb') as f:
             f.write(response)
