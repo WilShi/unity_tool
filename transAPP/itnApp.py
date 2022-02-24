@@ -219,6 +219,7 @@ class ItnApp(QWidget):
     def outputexcel(self):
         if self.checkinput():
             outputpath = QFileDialog.getExistingDirectory(self, "选取导出文件的路径", str(Path.home())+"/Downloads")
+            if not outputpath: return
             if not self.outputres.toPlainText(): self.transsingle()
             main(self.filepath, self.tagInline.text(), dic=self.dicpath, appCode=self.appcodeInline.text(), \
                 creator=self.creatorInline.text(), outputpath=outputpath).outputexcel(self.temptrans)

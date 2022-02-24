@@ -122,30 +122,30 @@ class Findfaceapp(QWidget):
     def videofacemark(self):
         self.path = QFileDialog.getOpenFileName(self, "选取视频文件路径", str(Path.home())+"/Downloads")[0] \
             if not self.path else self.path
-
+        if not self.path: return
         if '.mp4' not in self.path and '.avi' not in self.path:
             self.Tips("输入的视频格式错误\n请重新选择(仅支持mp4和avi格式)")
             self.path = ""
-            self.videofacemark()
+            return
         
         text, ok = QInputDialog.getText(self, '视频格式', '帧率, 宽度, 高度')
-        if ok:
+        while ok:
             try:
                 info = text.split(',') if ',' in text else text.split(' ')
                 rate = int(info[0])
                 width = int(info[1])
                 hight = int(info[2])
                 outpath = QFileDialog.getExistingDirectory(self, "选取导出路径", str(Path.home())+"/Downloads")
+                if not outpath: return
                 name, ok = QInputDialog.getText(self, '名称', '导出视频名称')
                 if ok:
                     outpath += f"/{name}" if name else "/output"
                     Process(target=MarkVideo(rate, width, hight).multprocess, args=(self.path,outpath,)).start()
                     self.Tips("已开启后台进程运行......\n最终结果将保存在下载文件夹中")
-                    return
                 return
             except Exception as error:
                 self.Tips("输入的视频格式有误!\n请重新输入")
-                self.videofacemark()
+                text, ok = QInputDialog.getText(self, '视频格式', '帧率, 宽度, 高度')
 
 
     # 提示
