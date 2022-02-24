@@ -63,10 +63,18 @@ class Transapp(QWidget):
 
     # 翻译文本
     def transText(self):
-        words = self.textinput.toPlainText()
+        if not self.textinput.toPlainText(): return self.outputres.setText('')
+        words = self.textinput.toPlainText().split('\n')
+        output = []
         try:
-            res = lang(translateFrom='google').translate(words)
-            self.outputres.setText(res)
+            for i in words:
+                if i:
+                    res = lang(translateFrom='google').translate(i)
+                    output.append(res)
+                else:
+                    output.append('')
+
+            self.outputres.setText('\n'.join(output))
         except Exception as error:
             self.Tips("翻译出错，请稍后再试！")
 

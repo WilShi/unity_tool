@@ -34,6 +34,19 @@ class format():
         print("="*50)
 
 
+    def create_excel(self, appCode, creator, lis, outpath):
+        head = ['appCode', 'langCode', 'langText', 'langType', 'createBy']
+        rows = []
+        for i in lis:
+            subrow = [appCode, i['key'], i['cn'], 'cn', creator]
+            rows.append(subrow)
+            subrow = [appCode, i['key'], i['en'], 'en', creator]
+            rows.append(subrow)
+        
+        dt = pd.DataFrame(rows, columns=head)
+        dt.to_excel("{}/lang.xlsx".format(outpath), index=0)
+
+
     def duplicative_csv(self):
         print("开始给 {} 路径的文件去重......".format(self.path))
 

@@ -152,11 +152,13 @@ class lang():
             words = self.read_from_pdf(path)
             words_list = self.clean_data(words)
 
-            with futures.ThreadPoolExecutor(6) as excuter:
+            with futures.ThreadPoolExecutor(4) as excuter:
                 zh_txt = excuter.map(self.translate, words_list)
             # zh_txt = [translate(txt) for txt in data_list]
             zh_txt = list(zh_txt)
             article = '\n\n'.join(zh_txt)
+
+            print(article)
             # print(article)
             # with open(outpath, 'w', encoding='utf-8') as f:
             #     f.write(article)
@@ -169,5 +171,5 @@ if __name__ == "__main__":
     # res = lang(translateFrom='google').translate(argv[1])
     # print(res)
 
-    res = lang(translateFrom='google').trans_doc(argv[1], '')
+    lang(translateFrom='google').trans_doc(argv[1], '')
 

@@ -45,6 +45,7 @@ class lang():
 
 
     def translate(self, word, from_='cn', to_='en'):
+        if not word: return {from_: '', to_: '', "key": ''}
 
         if word in self.dic:
             wd = {from_: word, to_: self.dic[word][2], "key": "{}_".format(self.tag) + self.dic[word][2].replace(' ', '_')}

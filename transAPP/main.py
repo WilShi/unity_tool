@@ -9,7 +9,7 @@ from createfile import createfile
 from format import format
 
 class main():
-    def __init__(self, path, tag, dic='', appCode='', creator='', outputpath='..') -> None:
+    def __init__(self='', path='', tag='', dic='', appCode='', creator='', outputpath='..') -> None:
         self.dic = {}
         if dic:
             csv_reader = csv.reader(open(dic))
@@ -38,8 +38,6 @@ class main():
 
         format(self.csvpath).format_csv(self.appCode, self.creator)
         
-
-    
     def transfile(self, path):
         print("*"*50)
         print("从 {} 路径开始读取文件".format(path))
@@ -86,7 +84,14 @@ class main():
         fileName = fileName.replace('.', '_')
         self.logpath = createfile().writeFile("{}/logPage/{}_log.txt".format(root_file, subpath), log)
 
+    def transwords(self, words):
+        return(lang(self.dic, self.tag).translate(words))
+
+    def outputexcel(self, lis):
+        format('').create_excel(self.appCode, self.creator, lis, self.outputpath)
 
 if __name__ == "__main__":
 
     f = main(argv[1], 'TEST', argv[2], "CRM", "Wilson Shi").start()
+
+    # main().transwords("测试一下")
