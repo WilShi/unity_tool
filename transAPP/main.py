@@ -7,6 +7,8 @@ from readfile import readfile
 from lang import lang
 from createfile import createfile
 from format import format
+from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox
+import qdarkstyle
 
 class main():
     def __init__(self='', path='', tag='', dic='', appCode='', creator='', outputpath='..') -> None:
@@ -37,6 +39,15 @@ class main():
                 self.transfile(file)
 
         format(self.csvpath).format_csv(self.appCode, self.creator)
+        app = QApplication([])
+        self.Tips(f"已导出国际化文件至：\n{self.outputpath}")
+
+    # 提示
+    def Tips(self, message):
+        window = QWidget()
+        window.setWindowOpacity(0.9) # 设置窗口透明度
+        window.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5()) # 美化风格
+        QMessageBox.about(window, "提示", message)
         
     def transfile(self, path):
         print("*"*50)

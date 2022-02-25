@@ -48,7 +48,7 @@ from PySide2.QtGui import QImage, QKeySequence, QPixmap
 from PySide2.QtWidgets import (QAction, QApplication, QComboBox, QGroupBox,
                                QHBoxLayout, QLabel, QMainWindow, QPushButton,
                                QSizePolicy, QVBoxLayout, QWidget)
-
+import qdarkstyle
 
 """This example uses the video from a  webcam to apply pattern
 detection from the OpenCV module. e.g.: face, eyes, body, etc."""
@@ -62,6 +62,7 @@ class Thread(QThread):
         self.trained_file = None
         self.status = True
         self.cap = True
+        
 
     def set_file(self, fname):
         # The data comes with the 'opencv-python' module
@@ -111,12 +112,12 @@ class Window(QMainWindow):
         # Main menu bar
         self.menu = self.menuBar()
         self.menu_file = self.menu.addMenu("File")
-        exit = QAction("Exit", self, triggered=qApp.quit)
+        exit = QAction("Exit", self, triggered=QApplication.quit)
         self.menu_file.addAction(exit)
 
         self.menu_about = self.menu.addMenu("&About")
         about = QAction("About Qt", self, shortcut=QKeySequence(QKeySequence.HelpContents),
-                        triggered=qApp.aboutQt)
+                        triggered=QApplication.aboutQt)
         self.menu_about.addAction(about)
 
         # Create a label for the display camera
@@ -171,6 +172,9 @@ class Window(QMainWindow):
         self.button2.setEnabled(False)
         self.combobox.currentTextChanged.connect(self.set_model)
 
+        # self.setWindowOpacity(0.9) # 设置窗口透明度
+        self.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5()) # 美化风格
+
     @Slot()
     def set_model(self, text):
         self.th.set_file(text)
@@ -199,6 +203,14 @@ class Window(QMainWindow):
     def setImage(self, image):
         self.label.setPixmap(QPixmap.fromImage(image))
 
+    
+
+class Startcam():
+    def start(self):
+        app = QApplication()
+        w = Window()
+        w.show()
+        sys.exit(app.exec_())
 
 if __name__ == "__main__":
     app = QApplication()

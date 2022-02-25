@@ -16,6 +16,8 @@ import dlib
 from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import Process
 from threading import Thread
+from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox
+import qdarkstyle
 
 import numpy as np
 
@@ -331,6 +333,8 @@ class Findface():
 
         end = datetime.datetime.now()
         print(f"总图片：{length} 张 {'*'*10} 用时：{(end - start).seconds} 秒 {'*'*10} 每秒：{round(length/int((end - start).seconds))} 张")
+        app = QApplication([])
+        self.Tips("人脸图片标注已结束\n文件保存在下载文件夹中")
 
 
 
@@ -366,7 +370,7 @@ class Findface():
             Image.open(i).convert('RGB').save(f"{fail_dir}{random.randint(1, 10000000000)}.jpg")
 
 
-    def multp_find_face(self, path):
+    def multp_find_face(self, path, tmpfile):
         start = datetime.datetime.now()
 
         # use fr to check the face
@@ -375,7 +379,8 @@ class Findface():
         paths = readfile().listfiles(path)
 
         fail_dir = '{}/Downloads/finish_fail/'.format(str(Path.home()))
-        pass_dir_fr = 'fr_pass/'
+        # pass_dir_fr = 'fr_pass/'
+        pass_dir_fr = tmpfile
 
         length = len(paths)
 
@@ -478,13 +483,26 @@ class Findface():
 
 
     def face(self, path):
-        p = Process(target=self.multp_find_face, args=(path,))
+        tmpfile = str(random.randint(1, 100000000))+'/'
+        p = Process(target=self.multp_find_face, args=(path,tmpfile,))
         p.start()
         p.join()
         
-        p = Process(target=self.deletefile, args=('fr_pass/',))
+        p = Process(target=self.deletefile, args=(tmpfile,))
         p.start()
         p.join()
+
+        app = QApplication([])
+        self.Tips("人脸图片清洗已结束\n文件保存在下载文件夹中")
+
+
+    # 提示
+    def Tips(self, message):
+        window = QWidget()
+        window.setWindowOpacity(0.9) # 设置窗口透明度
+        window.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5()) # 美化风格
+        QMessageBox.about(window, "提示", message)
+
 
 
 if __name__ == "__main__":

@@ -12,6 +12,7 @@ from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 import os, time
 import configparser
 import qdarkstyle
+from multiprocessing import Process
 
 class ItnApp(QWidget):
     def __init__(self):
@@ -105,12 +106,19 @@ class ItnApp(QWidget):
         self.happcode.addWidget(self.appcodeInline)
         self.vtopmiddleSilder.addLayout(self.hdic)
         self.vtopmiddleSilder.addLayout(self.happcode)
+
+        self.hstartspace = QHBoxLayout()
+        self.hstartspace.addStretch(1)
+        self.hstartspace.addWidget(self.startitnBtn)
+        self.hstartspace.addStretch(1)
+        self.vtopmiddleSilder.addLayout(self.hstartspace)
+        
         self.vtopmiddleSilder.setContentsMargins(0,0,20,0)
 
         self.hfilesilder = QHBoxLayout()
         self.hfilesilder.addLayout(self.vfileSilder)
         self.hfilesilder.addLayout(self.vtopmiddleSilder)
-        self.hfilesilder.addWidget(self.startitnBtn)
+        # self.hfilesilder.addWidget(self.startitnBtn)
         self.hfilesilder.setContentsMargins(0,0,0,20)
 
         # 下半段
@@ -174,9 +182,10 @@ class ItnApp(QWidget):
     # 开始国际化
     def startitn(self):
         if self.filepath == '': self.selectfile()
+        if not self.filepath: return
         if self.checkinput():
             outputpath = QFileDialog.getExistingDirectory(self, "选取导出文件的路径", str(Path.home())+"/Downloads")
-
+            if not outputpath: return
             react_path = self.filepath
             dic = self.dicpath
 
@@ -184,18 +193,14 @@ class ItnApp(QWidget):
             appcode = self.appcodeInline.text()
             creator = self.creatorInline.text()
 
-            self.startitnBtn.setText("正在国际化...")
-            QApplication.processEvents()
-            # time.sleep(5)
-            # print(react_path, tag, dic, appcode, creator, outputpath)
-            main(react_path, tag, dic=dic, appCode=appcode, creator=creator, outputpath=outputpath).start()
+            Process(target=main(react_path, tag, dic=dic, appCode=appcode, creator=creator, outputpath=outputpath).start).start()
 
-            self.startitnBtn.setText("开始国际化")
-            self.Tips(f"国际化已完成!!!\n文件保存在：{outputpath}")
+            self.Tips(f"已开启后台进程运行......\n最终结果将保存在: {outputpath}")
         
 
     # 翻译单个输入的字段
     def transsingle(self):
+        self.temptrans = []
         words = self.singletextinput.toPlainText().split('\n')
         if len(words) and not words[0]: return self.outputres.setText('')
         output = []
@@ -221,6 +226,9 @@ class ItnApp(QWidget):
             outputpath = QFileDialog.getExistingDirectory(self, "选取导出文件的路径", str(Path.home())+"/Downloads")
             if not outputpath: return
             if not self.outputres.toPlainText(): self.transsingle()
+            print(self.outputres.toPlainText().count('\n'), (3*self.singletextinput.toPlainText().count('\n'))+2)
+            if self.outputres.toPlainText().count('\n') != (3*self.singletextinput.toPlainText().count('\n'))+2: self.transsingle()
+
             main(self.filepath, self.tagInline.text(), dic=self.dicpath, appCode=self.appcodeInline.text(), \
                 creator=self.creatorInline.text(), outputpath=outputpath).outputexcel(self.temptrans)
             self.Tips(f"国际化已完成!!!\n文件保存在：{outputpath}")

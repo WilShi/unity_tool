@@ -14,6 +14,8 @@ from multiprocessing import Process
 
 from human_face_recognition.find_face import Findface
 from human_face_recognition.markvideo import MarkVideo
+from human_face_recognition.webcam_pattern_detection import Startcam
+from findeyes.frol import Frol
 
 class Findfaceapp(QWidget):
     def __init__(self):
@@ -81,12 +83,10 @@ class Findfaceapp(QWidget):
         self.faceimagewashBtn.clicked.connect(self.findface)
         self.faceimagemarkBtn.clicked.connect(self.imagefacemark)
         self.facevideomarkBtn.clicked.connect(self.videofacemark)
-        # self.faceimageshowmarkBtn.clicked.connect(self.transDoc)
-        # self.frolimagewashBtn.clicked.connect(self.transDoc)
-        # self.webcammarkBtn.clicked.connect(self.transDoc)
-        # self.deletefileBtn.clicked.connect(self.transDoc)
-
-        self.path = ""
+        self.faceimageshowmarkBtn.clicked.connect(self.showfacemark)
+        self.frolimagewashBtn.clicked.connect(self.imageforlmark)
+        self.webcammarkBtn.clicked.connect(self.webcamshow)
+        self.deletefileBtn.clicked.connect(self.deletefile)
 
 
     # 初始化界面
@@ -120,38 +120,56 @@ class Findfaceapp(QWidget):
 
     # 视频人脸标注
     def videofacemark(self):
-        self.path = QFileDialog.getOpenFileName(self, "选取视频文件路径", str(Path.home())+"/Downloads")[0] \
-            if not self.path else self.path
-        if not self.path: return
-        if '.mp4' not in self.path and '.avi' not in self.path:
+        path = QFileDialog.getOpenFileName(self, "选取视频文件路径", str(Path.home())+"/Downloads")[0]
+        if not path: return
+        if '.mp4' not in path and '.avi' not in path:
             self.Tips("输入的视频格式错误\n请重新选择(仅支持mp4和avi格式)")
             self.path = ""
             return
         
-        text, ok = QInputDialog.getText(self, '视频格式', '帧率, 宽度, 高度')
-        while ok:
-            try:
-                info = text.split(',') if ',' in text else text.split(' ')
-                rate = int(info[0])
-                width = int(info[1])
-                hight = int(info[2])
-                outpath = QFileDialog.getExistingDirectory(self, "选取导出路径", str(Path.home())+"/Downloads")
-                if not outpath: return
-                name, ok = QInputDialog.getText(self, '名称', '导出视频名称')
-                if ok:
-                    outpath += f"/{name}" if name else "/output"
-                    Process(target=MarkVideo(rate, width, hight).multprocess, args=(self.path,outpath,)).start()
-                    self.Tips("已开启后台进程运行......\n最终结果将保存在下载文件夹中")
-                return
-            except Exception as error:
-                self.Tips("输入的视频格式有误!\n请重新输入")
-                text, ok = QInputDialog.getText(self, '视频格式', '帧率, 宽度, 高度')
+        outpath = QFileDialog.getExistingDirectory(self, "选取导出路径", str(Path.home())+"/Downloads")
+        if not outpath: return
 
+        name, ok = QInputDialog.getText(self, '名称', '导出视频名称')
+        if ok:
+            outpath += f"/{name}" if name else "/output"
+            Process(target=MarkVideo().multprocess, args=(path,outpath,)).start()
+            self.Tips(f"已开启后台进程运行......\n最终结果将保存在:{outpath}")
+        return
+
+    # 人脸标注展示
+    def showfacemark(self):
+        paths = QFileDialog.getOpenFileNames(self, "选取图片路径", str(Path.home())+"/Downloads")[0]
+        if len(paths) > 10:
+            self.Tips("单次最多可识别十张图片")
+            return
+        for path in paths:
+            if '.jpg' in path:
+                Process(target=Findface().show_face_mark, args=(path,)).start()
+            else:
+                self.Tips(f"文件{path}格式不支持")
+
+    # 反光图片清洗
+    def imageforlmark(self):
+        path = QFileDialog.getExistingDirectory(self, "选取文件路径", str(Path.home())+"/Downloads")
+        if path:
+            Process(target=Frol().startfind, args=(path,)).start()
+            self.Tips("已开启后台进程运行......\n最终结果将保存在下载文件夹中")
+
+    # 摄像头人脸检测
+    def webcamshow(self):
+        Process(target=Startcam().start, args=()).start()
+
+    # 删除文件
+    def deletefile(self):
+        path = QFileDialog.getExistingDirectory(self, "选取文件路径", str(Path.home())+"/Downloads")
+        if path:
+            Findface().deletefile(path)
+            self.Tips("文件删除成功")
 
     # 提示
     def Tips(self, message):
         QMessageBox.about(self, "提示", message)
-
 
 
 if __name__ == '__main__':

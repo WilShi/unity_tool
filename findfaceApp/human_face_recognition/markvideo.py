@@ -10,16 +10,21 @@ import sys
 from PIL import Image, ImageDraw
 import numpy as np
 from multiprocessing import Process, Queue
+from PyQt5.QtWidgets import QApplication, QWidget, QMessageBox
+import qdarkstyle
 
-from human_face_recognition.find_face import readfile
+try:
+    from human_face_recognition.find_face import readfile
+except Exception as error:
+    from find_face import readfile
 
 
-class MarkVideo:
+class MarkVideo():
 
-    def __init__(self, rate, width, hight) -> None:
-        self.rate = rate
-        self.width = width
-        self.hight = hight
+    def __init__(self) -> None:
+        self.rate = 0
+        self.width = 0
+        self.hight = 0
 
 
     def load_video(self, path, output_name):
@@ -157,12 +162,18 @@ class MarkVideo:
 
         start = datetime.datetime.now()
 
+        cap = cv2.VideoCapture(path)
+        self.width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.hight = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        self.rate = int(round(cap.get(cv2.CAP_PROP_FPS)))
+        print("width:{} \nheight:{} \nfps:{}".format(self.width, self.hight, self.rate))
+
         output_name += '.avi' if '.avi' not in output_name else output_name
 
         input_video = cv2.VideoCapture(path)
         length = int(input_video.get(cv2.CAP_PROP_FRAME_COUNT))
 
-        length = 1000
+        # length = 200
 
         partvideos = self.prework(input_video, length)
         spt = []
@@ -204,7 +215,18 @@ class MarkVideo:
         end = datetime.datetime.now()
         print(f"导出视频用时：{(end - start).seconds} 秒")
 
+        app = QApplication([])
+        self.Tips(f"已导出人脸标注视频至：\n{output_name}")
+
+    # 提示
+    def Tips(self, message):
+        window = QWidget()
+        window.setWindowOpacity(0.9) # 设置窗口透明度
+        window.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5()) # 美化风格
+        QMessageBox.about(window, "提示", message)
+
 
 if __name__ == "__main__":
 
-    MarkVideo(24, 1280, 720).multprocess(r"C:\\Users\\cn-wilsonshi\\Downloads\\ted.mp4", "ted")
+    MarkVideo().multprocess(r"C:\\Users\\cn-wilsonshi\\Downloads\\Obama.mp4", "test")
+    # print(1)
