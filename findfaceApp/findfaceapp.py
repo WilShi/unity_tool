@@ -14,8 +14,8 @@ from multiprocessing import Process
 
 from human_face_recognition.find_face import Findface
 from human_face_recognition.markvideo import MarkVideo
-from human_face_recognition.webcam_pattern_detection import Startcam
-from findeyes.frol import Frol
+# from human_face_recognition.webcam_pattern_detection import Startcam
+# from findeyes.frol import Frol
 
 class Findfaceapp(QWidget):
     def __init__(self):
@@ -84,8 +84,8 @@ class Findfaceapp(QWidget):
         self.faceimagemarkBtn.clicked.connect(self.imagefacemark)
         self.facevideomarkBtn.clicked.connect(self.videofacemark)
         self.faceimageshowmarkBtn.clicked.connect(self.showfacemark)
-        self.frolimagewashBtn.clicked.connect(self.imageforlmark)
-        self.webcammarkBtn.clicked.connect(self.webcamshow)
+        # self.frolimagewashBtn.clicked.connect(self.imageforlmark)
+        # self.webcammarkBtn.clicked.connect(self.webcamshow)
         self.deletefileBtn.clicked.connect(self.deletefile)
 
 
@@ -149,16 +149,16 @@ class Findfaceapp(QWidget):
             else:
                 self.Tips(f"文件{path}格式不支持")
 
-    # 反光图片清洗
-    def imageforlmark(self):
-        path = QFileDialog.getExistingDirectory(self, "选取文件路径", str(Path.home())+"/Downloads")
-        if path:
-            Process(target=Frol().startfind, args=(path,)).start()
-            self.Tips("已开启后台进程运行......\n最终结果将保存在下载文件夹中")
+    # # 反光图片清洗
+    # def imageforlmark(self):
+    #     path = QFileDialog.getExistingDirectory(self, "选取文件路径", str(Path.home())+"/Downloads")
+    #     if path:
+    #         Process(target=Frol().startfind, args=(path,)).start()
+    #         self.Tips("已开启后台进程运行......\n最终结果将保存在下载文件夹中")
 
-    # 摄像头人脸检测
-    def webcamshow(self):
-        Process(target=Startcam().start, args=()).start()
+    # # 摄像头人脸检测
+    # def webcamshow(self):
+    #     Process(target=Startcam().start, args=()).start()
 
     # 删除文件
     def deletefile(self):
